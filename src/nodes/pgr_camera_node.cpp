@@ -96,6 +96,14 @@ public:
 		if (level >= (uint32_t) driver_base::SensorLevels::RECONFIGURE_STOP)
 			stop();
 
+		// Exposure
+		if (config.auto_exposure)
+			cam_->SetExposure(true, true);
+		else {
+			cam_->SetExposure(false, true);
+		}
+
+
 		cam_->SetVideoModeAndFramerate(config.width, config.height,
 				config.format, config.frame_rate);
 

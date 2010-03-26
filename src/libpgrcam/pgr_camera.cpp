@@ -195,7 +195,7 @@ void Camera::stop() {
 }
 
 void Camera::SetVideoModeAndFramerate(unsigned int width, unsigned int height,
-		string format, unsigned int rate) {
+		string format, double rate) {
 	// TODO: support fractional frame rates
 	// TODO: support colour cameras
 	// TODO: support additional modes
@@ -228,28 +228,24 @@ void Camera::SetVideoModeAndFramerate(unsigned int width, unsigned int height,
 	}
 
 	unknown = false;
-	switch (rate) {
-	case 15:
+	// The following hardcoded numbers are from testing with
+	// a FireflyMV USB (mono) camera using FlyCap2's configuration GUI
+	// TODO: determine whether they are camera specific and if so, so this a better way..
+	if (rate >= 1.151 && rate < 7.606) {
+		frameRate = FRAMERATE_7_5;
+	} else if (rate >= 7.606 && rate < 15.211) {
 		frameRate = FRAMERATE_15;
-		break;
-	case 30:
+	} else if (rate >= 15.211 && rate < 30.430) {
 		frameRate = FRAMERATE_30;
-		break;
-	case 60:
+	} else if (rate >= 30.430 && rate < 60.861) {
 		frameRate = FRAMERATE_60;
-		break;
-	default:
-		unknown = true;
-		break;
-	}
-
-	if (unknown) {
-		ROS_ERROR("Unknown/unsupported frame rate - mode not set");
+	} else {
+		ROS_ERROR("Unsupported frame rate");
 		return;
 	}
 
 	Error error;
-	ROS_INFO("Attempting to set mode for width = %u height = %u format = %s frame_rate = %u",
+	ROS_INFO("Attempting to set mode for width = %u height = %u format = %s frame_rate = %f",
 			width, height, format.c_str(), rate);
 	if ((error = camPGR.SetVideoModeAndFrameRate(vidMode, frameRate))
 			!= PGRERROR_OK) {
@@ -259,6 +255,31 @@ void Camera::SetVideoModeAndFramerate(unsigned int width, unsigned int height,
 		return;
 	}
 	ROS_INFO("Video mode and frame rate set");
+
+	FlyCapture2::Property prop;
+	prop.type = FRAME_RATE;
+	prop.autoManualMode = false;
+	prop.onOff = true;
+	prop.absControl = true;
+	prop.absValue = rate;
+	if((error = camPGR.SetProperty(&prop)) != PGRERROR_OK) {
+		ROS_ERROR(error.GetDescription());
+	}
+
+
+}
+
+void Camera::SetExposure(bool _auto, bool onoff, unsigned int value)
+{
+	FlyCapture2::Property prop;
+	FlyCapture2::Error error;
+	prop.type = FlyCapture2::AUTO_EXPOSURE;
+	prop.autoManualMode = _auto;
+	prop.onOff = onoff;
+	prop.valueA = value;
+	if((error = camPGR.SetProperty(&prop)) != PGRERROR_OK) {
+		ROS_ERROR(error.GetDescription());
+	}
 }
 
 } // namespace pgrcamera

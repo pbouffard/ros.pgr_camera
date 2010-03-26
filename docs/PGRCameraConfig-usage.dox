@@ -16,7 +16,7 @@
   <param name="roi_height" type="int" value="0" />
   <param name="width" type="int" value="640" />
   <param name="height" type="int" value="480" />
-  <param name="format" type="str" value="RGB" />
+  <param name="format" type="str" value="Y8" />
   <param name="frame_rate" type="double" value="30.0" />
 </node>
 \endverbatim

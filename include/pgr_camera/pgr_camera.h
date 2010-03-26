@@ -58,7 +58,8 @@ public:
 	void stop();
 //	void frameDone(FlyCapture2::Image *frame, void *pCallbackData);
 	void setFrameCallback(boost::function<void (FlyCapture2::Image*)> callback);
-	void SetVideoModeAndFramerate(unsigned int width, unsigned int height, string format, unsigned int rate);
+	void SetVideoModeAndFramerate(unsigned int width, unsigned int height, string format, double rate);
+	void SetExposure(bool _auto, bool onoff, unsigned int value = 50);
 
 	// FIXME: following should really be private, but I can't see how to make the compiler
 	// happy if they are..
