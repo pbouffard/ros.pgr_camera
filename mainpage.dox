@@ -2,7 +2,7 @@
 \mainpage
 \htmlinclude manifest.html
 
-\b pgr_camera is ... 
+\b A ROS node to provide access to Point Grey Research cameras.
 
 <!-- 
 Provide an overview of your package.
