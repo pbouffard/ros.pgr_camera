@@ -1,0 +1,22 @@
+\subsubsection parameters ROS parameters
+
+Reads and maintains the following parameters on the ROS server
+
+- \b "~trigger_mode" : \b [str] Camera mode (streaming vs. polled) min: , default: streaming, max: 
+- \b "~auto_exposure" : \b [bool] Sets the camera exposure duration to automatic. Causes the @b exposure setting to be ignored. min: False, default: True, max: True
+- \b "~exposure" : \b [double] Camera exposure time in seconds. min: 0.0, default: 0.015, max: 1.0
+- \b "~auto_gain" : \b [bool] Sets the analog gain to automatic. Causes the @b gain setting to be ignored. min: False, default: True, max: True
+- \b "~gain" : \b [int] The gain level in dB. min: 0, default: 0, max: 16
+- \b "~auto_whitebalance" : \b [bool] Whether whitebalance will continuously adjust to the current scene. Causes the @b whitebalance_red and @b whitebalance_blue settings to be ignored. min: False, default: True, max: True
+- \b "~whitebalance_red" : \b [int] Red gain as a percentage of the camera default setting. min: 0, default: 0, max: 100
+- \b "~whitebalance_blue" : \b [int] Blue gain as a percentage of the camera default setting. min: 0, default: 0, max: 100
+- \b "~frame_id" : \b [str] The optical camera TF frame set in message headers. min: , default: camera, max: 
+- \b "~roi_x_offset" : \b [int] X offset of the region of interest. min: 0, default: 0, max: 4000
+- \b "~roi_y_offset" : \b [int] Y offset of the region of interest. min: 0, default: 0, max: 4000
+- \b "~roi_width" : \b [int] Width of the region of interest (0 for automatic). min: 0, default: 0, max: 4000
+- \b "~roi_height" : \b [int] Height of the region of interest (0 for automatic). min: 0, default: 0, max: 4000
+- \b "~width" : \b [int] Capture width min: 640, default: 640, max: 640
+- \b "~height" : \b [int] Capture height min: 480, default: 480, max: 480
+- \b "~format" : \b [str] Capture format (Y8,RGB) min: , default: RGB, max: 
+- \b "~frame_rate" : \b [double] Camera frame rate in Hz. min: 15.0, default: 30.0, max: 60.0
+

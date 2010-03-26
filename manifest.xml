@@ -1,0 +1,25 @@
+<package>
+  <description brief="pgr_camera">
+
+     pgr_camera
+
+  </description>
+  <author>Patrick Bouffard</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/pgr_camera</url>
+  <depend package="roscpp"/>
+  <depend package="std_msgs"/>
+  <depend package="sensor_msgs"/>
+  <depend package="diagnostic_updater"/>
+  <depend package="diagnostic_msgs"/>
+  <depend package="image_transport"/>
+  <depend package="self_test"/>
+  <depend package="driver_base"/>
+  <depend package="dynamic_reconfigure"/>
+  <depend package="camera_calibration_parsers"/>
+  <depend package="polled_camera"/>
+
+</package>
+
+

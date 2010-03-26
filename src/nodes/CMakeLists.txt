@@ -1,0 +1,2 @@
+rosbuild_add_executable(pgr_camera_node pgr_camera_node.cpp)
+target_link_libraries(pgr_camera_node pgr_camera)
