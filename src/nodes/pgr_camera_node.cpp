@@ -108,9 +108,22 @@ public:
 			ROS_WARN("Found no cameras");
 
 		//ros::NodeHandle local_nh("~");
-
 		cam_.reset(new pgr_camera::Camera());
 		cam_->initCam();
+
+		// Set up self tests and diagnostics.
+//		self_test_.add("Info Test", this, &PGRCameraNode::infoTest);
+//		self_test_.add("Attribute Test", this, &PGRCameraNode::attributeTest);
+//		self_test_.add("Image Test", this, &PGRCameraNode::imageTest);
+
+		diagnostic_.add("Frequency Status", this, &PGRCameraNode::freqStatus);
+//		diagnostic_.add("Frame Statistics", this, &PGRCameraNode::frameStatistics);
+//		diagnostic_.add("Packet Statistics", this, &PGRCameraNode::packetStatistics);
+//		diagnostic_.add("Packet Error Status", this, &PGRCameraNode::packetErrorStatus);
+
+		diagnostic_timer_ = nh_.createTimer(ros::Duration(0.1), boost::bind(
+				&PGRCameraNode::runDiagnostics, this));
+
 	}
 
 	void configure(pgr_camera::PGRCameraConfig& config, uint32_t level) {
@@ -207,6 +220,32 @@ public:
 		if (processFrame(frame, img_, cam_info_))
 			streaming_pub_.publish(img_, cam_info_);
 	}
+
+	/////////////////
+	// Diagnostics //
+	/////////////////
+
+	void runDiagnostics() {
+		self_test_.checkTest();
+		diagnostic_.update();
+	}
+
+	void freqStatus(diagnostic_updater::DiagnosticStatusWrapper& status) {
+		double freq = (double) (count_) / diagnostic_.getPeriod();
+
+		if (freq < (.9 * desired_freq_)) {
+			status.summary(2, "Desired frequency not met");
+		} else {
+			status.summary(0, "Desired frequency met");
+		}
+
+		status.add("Images in interval", count_);
+		status.add("Desired frequency", desired_freq_);
+		status.add("Actual frequency", freq);
+
+		count_ = 0;
+	}
+
 };
 
 int main(int argc, char** argv) {
