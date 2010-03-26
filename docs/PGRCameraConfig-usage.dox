@@ -18,6 +18,8 @@
   <param name="height" type="int" value="480" />
   <param name="format" type="str" value="Y8" />
   <param name="frame_rate" type="double" value="30.0" />
+  <param name="intrinsics_ini" type="str" value="test_intrinsics.ini" />
+  <param name="camera_name" type="str" value="pgr_camera" />
 </node>
 \endverbatim
 

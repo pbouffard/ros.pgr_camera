@@ -19,4 +19,6 @@ Reads and maintains the following parameters on the ROS server
 - \b "~height" : \b [int] Capture height min: 480, default: 480, max: 480
 - \b "~format" : \b [str] Capture format (Y8,RGB) min: , default: Y8, max: 
 - \b "~frame_rate" : \b [double] Camera frame rate in Hz. min: 1.151, default: 30.0, max: 60.861
+- \b "~intrinsics_ini" : \b [str] Camera intrinsics INI filename min: , default: test_intrinsics.ini, max: 
+- \b "~camera_name" : \b [str] Camera Name (used in loading intrinsics INI) min: , default: pgr_camera, max: 
 
