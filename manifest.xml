@@ -1,9 +1,5 @@
 <package>
-  <description brief="pgr_camera">
-
-     pgr_camera
-
-  </description>
+  <description brief="pgr_camera">A ROS node to provide access to Point Grey Research cameras.  </description>
   <author>Patrick Bouffard</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
