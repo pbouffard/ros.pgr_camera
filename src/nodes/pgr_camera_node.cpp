@@ -55,6 +55,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 #include <sstream>
+#include <fstream>
+#include <sys/stat.h>
 
 class PGRCameraNode {
 private:
@@ -192,12 +194,17 @@ public:
 
 	void loadIntrinsics(string inifile, string camera_name) {
 		// Read in calibration file
-		// TODO: following crashes if the file doesn't exist - add a try/catch?
-		if (camera_calibration_parsers::readCalibrationIni(inifile,
-				camera_name, cam_info_))
-			ROS_INFO("Loaded calibration for camera '%s'", camera_name.c_str());
-		else
-			ROS_WARN("Failed to load intrinsics from camera");
+		ifstream fin(inifile.c_str());
+		if (fin.is_open()) {
+			fin.close();
+			if (camera_calibration_parsers::readCalibrationIni(inifile,
+					camera_name, cam_info_))
+				ROS_INFO("Loaded calibration for camera '%s'", camera_name.c_str());
+			else
+				ROS_WARN("Failed to load intrinsics from camera");
+		} else {
+			ROS_WARN("Intrinsics file not found: %s", inifile.c_str());
+		}
 	}
 
 };
