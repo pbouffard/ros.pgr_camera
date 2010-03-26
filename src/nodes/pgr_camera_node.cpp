@@ -1,36 +1,36 @@
 /*********************************************************************
-* Software License Agreement (BSD License)
-*
-*  Copyright (c) <year>, <copyright holder>
-*  All rights reserved.
-*
-*  Redistribution and use in source and binary forms, with or without
-*  modification, are permitted provided that the following conditions
-*  are met:
-*
-*   * Redistributions of source code must retain the above copyright
-*     notice, this list of conditions and the following disclaimer.
-*   * Redistributions in binary form must reproduce the above
-*     copyright notice, this list of conditions and the following
-*     disclaimer in the documentation and/or other materials provided
-*     with the distribution.
-*   * Neither the name of the <organization> nor the names of its
-*     contributors may be used to endorse or promote products derived
-*     from this software without specific prior written permission.
-*
-*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-*  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-*  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-*  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-*  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-*  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-*  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-*  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-*  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-*  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-*  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-*  POSSIBILITY OF SUCH DAMAGE.
-*********************************************************************/
+ * Software License Agreement (BSD License)
+ *
+ *  Copyright (c) <year>, <copyright holder>
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ *   * Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer in the documentation and/or other materials provided
+ *     with the distribution.
+ *   * Neither the name of the <organization> nor the names of its
+ *     contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ *  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ *  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ *  POSSIBILITY OF SUCH DAMAGE.
+ *********************************************************************/
 
 // ROS communication
 #include <ros/ros.h>
@@ -60,6 +60,8 @@
 #include <boost/format.hpp>
 #include <sstream>
 
+#include "pgr_camera/rolling_sum.h"
+
 class PGRCameraNode {
 private:
 	ros::NodeHandle nh_;
@@ -77,11 +79,27 @@ private:
 	sensor_msgs::CameraInfo cam_info_;
 
 	// Diagnostics
+	ros::Timer diagnostic_timer_;
+	self_test::TestRunner self_test_;
+	diagnostic_updater::Updater diagnostic_;
+	std::string hw_id_;
 	int count_;
+	double desired_freq_;
+	static const int WINDOW_SIZE = 5; // remember previous 5s
+	unsigned long frames_dropped_total_, frames_completed_total_;
+	RollingSum<unsigned long> frames_dropped_acc_, frames_completed_acc_;
+	unsigned long packets_missed_total_, packets_received_total_;
+	RollingSum<unsigned long> packets_missed_acc_, packets_received_acc_;
 
 public:
 	PGRCameraNode(const ros::NodeHandle& node_handle) :
-		nh_(node_handle), it_(nh_), cam_(NULL), running(false), count_(0) {
+		nh_(node_handle), it_(nh_), cam_(NULL), running(false), count_(0),
+      frames_dropped_total_(0), frames_completed_total_(0),
+      frames_dropped_acc_(WINDOW_SIZE),
+      frames_completed_acc_(WINDOW_SIZE),
+      packets_missed_total_(0), packets_received_total_(0),
+      packets_missed_acc_(WINDOW_SIZE),
+      packets_received_acc_(WINDOW_SIZE) {
 		// Two-stage initialization: in the constructor we open the requested camera. Most
 		// parameters controlling capture are set and streaming started in configure(), the
 		// callback to dynamic_reconfig.
@@ -107,7 +125,6 @@ public:
 		else {
 			cam_->SetExposure(false, true);
 		}
-
 
 		cam_->SetVideoModeAndFramerate(config.width, config.height,
 				config.format, config.frame_rate);
