@@ -86,6 +86,8 @@ public:
 
 		//ros::NodeHandle local_nh("~");
 
+		// TODO: add facility to set intrinsics
+
 		cam_.reset(new pgr_camera::Camera());
 		cam_->initCam();
 	}
