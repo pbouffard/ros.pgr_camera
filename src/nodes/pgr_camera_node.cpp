@@ -116,6 +116,11 @@ public:
 			start();
 	}
 
+	~PGRCameraNode() {
+		stop();
+		cam_.reset();
+	}
+
 	void start() {
 		if (running)
 			return;
