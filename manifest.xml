@@ -1,6 +1,6 @@
 <package>
   <description brief="pgr_camera">
-  A ROS node to provide access to Point Grey Research cameras.
+  A ROS node to provide access to Point Grey Research cameras, using the FlyCapture2 SDK API
   Acknowledgement: This package is based largely on the prosilica_camera package,
   by patrick Mihelich (http://www.ros.org/wiki/prosilica_camera).
   driver by </description>
