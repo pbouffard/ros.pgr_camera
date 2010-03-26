@@ -44,6 +44,11 @@
 #include <polled_camera/publication_server.h>
 #include <pgr_camera/pgr_camera.h>
 
+// Diagnostics
+#include <diagnostic_updater/diagnostic_updater.h>
+#include <diagnostic_updater/DiagnosticStatusWrapper.h>
+#include <self_test/self_test.h>
+
 // Dynamic reconfigure
 #include <dynamic_reconfigure/server.h>
 #include <driver_base/SensorLevels.h>
@@ -57,6 +62,8 @@
 #include <sstream>
 #include <fstream>
 #include <sys/stat.h>
+
+#include "pgr_camera/rolling_sum.h"
 
 class PGRCameraNode {
 private:
@@ -75,11 +82,27 @@ private:
 	sensor_msgs::CameraInfo cam_info_;
 
 	// Diagnostics
+	ros::Timer diagnostic_timer_;
+	self_test::TestRunner self_test_;
+	diagnostic_updater::Updater diagnostic_;
+	std::string hw_id_;
 	int count_;
+	double desired_freq_;
+	static const int WINDOW_SIZE = 5; // remember previous 5s
+	unsigned long frames_dropped_total_, frames_completed_total_;
+	RollingSum<unsigned long> frames_dropped_acc_, frames_completed_acc_;
+	unsigned long packets_missed_total_, packets_received_total_;
+	RollingSum<unsigned long> packets_missed_acc_, packets_received_acc_;
 
 public:
 	PGRCameraNode(const ros::NodeHandle& node_handle) :
-		nh_(node_handle), it_(nh_), cam_(NULL), running(false), count_(0) {
+		nh_(node_handle), it_(nh_), cam_(NULL), running(false), count_(0),
+      frames_dropped_total_(0), frames_completed_total_(0),
+      frames_dropped_acc_(WINDOW_SIZE),
+      frames_completed_acc_(WINDOW_SIZE),
+      packets_missed_total_(0), packets_received_total_(0),
+      packets_missed_acc_(WINDOW_SIZE),
+      packets_received_acc_(WINDOW_SIZE) {
 		// Two-stage initialization: in the constructor we open the requested camera. Most
 		// parameters controlling capture are set and streaming started in configure(), the
 		// callback to dynamic_reconfig.
@@ -88,11 +111,22 @@ public:
 			ROS_WARN("Found no cameras");
 
 		//ros::NodeHandle local_nh("~");
-
-		// TODO: add facility to set intrinsics
-
 		cam_.reset(new pgr_camera::Camera());
 		cam_->initCam();
+
+		// Set up self tests and diagnostics.
+//		self_test_.add("Info Test", this, &PGRCameraNode::infoTest);
+//		self_test_.add("Attribute Test", this, &PGRCameraNode::attributeTest);
+//		self_test_.add("Image Test", this, &PGRCameraNode::imageTest);
+
+		diagnostic_.add("Frequency Status", this, &PGRCameraNode::freqStatus);
+//		diagnostic_.add("Frame Statistics", this, &PGRCameraNode::frameStatistics);
+//		diagnostic_.add("Packet Statistics", this, &PGRCameraNode::packetStatistics);
+//		diagnostic_.add("Packet Error Status", this, &PGRCameraNode::packetErrorStatus);
+
+		diagnostic_timer_ = nh_.createTimer(ros::Duration(0.1), boost::bind(
+				&PGRCameraNode::runDiagnostics, this));
+
 	}
 
 	void configure(pgr_camera::PGRCameraConfig& config, uint32_t level) {
@@ -210,6 +244,29 @@ public:
 		} else {
 			ROS_WARN("Intrinsics file not found: %s", inifile.c_str());
 		}
+	/////////////////
+	// Diagnostics //
+	/////////////////
+
+	void runDiagnostics() {
+		self_test_.checkTest();
+		diagnostic_.update();
+	}
+
+	void freqStatus(diagnostic_updater::DiagnosticStatusWrapper& status) {
+		double freq = (double) (count_) / diagnostic_.getPeriod();
+
+		if (freq < (.9 * desired_freq_)) {
+			status.summary(2, "Desired frequency not met");
+		} else {
+			status.summary(0, "Desired frequency met");
+		}
+
+		status.add("Images in interval", count_);
+		status.add("Desired frequency", desired_freq_);
+		status.add("Actual frequency", freq);
+
+		count_ = 0;
 	}
 
 };
