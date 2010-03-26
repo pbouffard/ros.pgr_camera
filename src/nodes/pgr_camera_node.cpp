@@ -43,6 +43,11 @@
 #include <polled_camera/publication_server.h>
 #include <pgr_camera/pgr_camera.h>
 
+// Diagnostics
+#include <diagnostic_updater/diagnostic_updater.h>
+#include <diagnostic_updater/DiagnosticStatusWrapper.h>
+#include <self_test/self_test.h>
+
 // Dynamic reconfigure
 #include <dynamic_reconfigure/server.h>
 #include <driver_base/SensorLevels.h>
