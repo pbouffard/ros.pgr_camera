@@ -1,6 +1,8 @@
 #ifndef ROLLING_SUM_H
 #define ROLLING_SUM_H
 
+// This file borrowed from prosilica_camera
+
 #include <boost/circular_buffer.hpp>
 
 // Boost.Accumulators' rolling_sum is in 1.38 :(
