@@ -43,39 +43,41 @@
 
 using namespace std;
 
-namespace pgr_camera {
+namespace pgr_camera
+{
 
-void init();
-size_t numCameras();
+  void init ();
+  size_t numCameras ();
 
-class Camera {
-public:
-	Camera();
-	Camera(unsigned int serNo);
+  class Camera
+  {
+  public:
+    Camera ();
+    Camera (unsigned int serNo);
 
-	void initCam();
-	void start();
-	void stop();
-//	void frameDone(FlyCapture2::Image *frame, void *pCallbackData);
-	void setFrameCallback(boost::function<void (FlyCapture2::Image*)> callback);
-	void SetVideoModeAndFramerate(unsigned int width, unsigned int height, string format, double rate);
-	void SetExposure(bool _auto, bool onoff, unsigned int value = 50);
+    void initCam ();
+    void start ();
+    void stop ();
+//      void frameDone(FlyCapture2::Image *frame, void *pCallbackData);
+    void setFrameCallback (boost::function < void (FlyCapture2::Image *) > callback);
+    void SetVideoModeAndFramerate (unsigned int width, unsigned int height, string format, double rate);
+    void SetExposure (bool _auto, bool onoff, unsigned int value = 50);
 
-	// FIXME: following should really be private, but I can't see how to make the compiler
-	// happy if they are..
-	boost::function<void (FlyCapture2::Image*)> userCallback_;
-	boost::mutex frameMutex_;
+    // FIXME: following should really be private, but I can't see how to make the compiler
+    // happy if they are..
+      boost::function < void (FlyCapture2::Image *) > userCallback_;
+      boost::mutex frameMutex_;
 
-private:
-	int camIndex;
-	unsigned int camSerNo;
-	FlyCapture2::Camera camPGR;
-	FlyCapture2::Image rawPGRImage;
-	FlyCapture2::FrameRate frameRate;
-	bool setup();
+  private:
+    int camIndex;
+    unsigned int camSerNo;
+      FlyCapture2::Camera camPGR;
+      FlyCapture2::Image rawPGRImage;
+      FlyCapture2::FrameRate frameRate;
+    bool setup ();
 
-};
+  };
 
-} // namespace pgrcamera
+}                               // namespace pgrcamera
 
-#endif // PGRCAMERA_H
+#endif                          // PGRCAMERA_H
