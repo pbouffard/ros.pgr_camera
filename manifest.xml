@@ -1,25 +1,28 @@
 <package>
-  <description brief="pgr_camera">
-  A ROS node to provide access to Point Grey Research cameras, using the FlyCapture2 SDK API
-  Acknowledgement: This package is based largely on the prosilica_camera package,
-  by Patrick Mihelich (http://www.ros.org/wiki/prosilica_camera).
-  driver by </description>
-  <author>Patrick Bouffard</author>
-  <license>BSD</license>
-  <review status="unreviewed" notes=""/>
-  <url>http://ros.org/wiki/pgr_camera</url>
-  <depend package="roscpp"/>
-  <depend package="std_msgs"/>
-  <depend package="sensor_msgs"/>
-  <depend package="diagnostic_updater"/>
-  <depend package="diagnostic_msgs"/>
-  <depend package="image_transport"/>
-  <depend package="self_test"/>
-  <depend package="driver_base"/>
-  <depend package="dynamic_reconfigure"/>
-  <depend package="camera_calibration_parsers"/>
-  <depend package="polled_camera"/>
-
+	<description brief="pgr_camera">
+		A ROS node to provide access to Point Grey Research cameras, using the
+		FlyCapture2 SDK API
+		Acknowledgement: This package is based largely on the prosilica_camera package,
+		by Patrick Mihelich (http://www.ros.org/wiki/prosilica_camera).
+	</description>
+	<author>Patrick Bouffard</author>
+	<license>BSD</license>
+	<review status="unreviewed" notes="" />
+	<url>http://ros.org/wiki/pgr_camera</url>
+	<depend package="roscpp" />
+	<depend package="std_msgs" />
+	<depend package="sensor_msgs" />
+	<depend package="diagnostic_updater" />
+	<depend package="diagnostic_msgs" />
+	<depend package="image_transport" />
+	<depend package="self_test" />
+	<depend package="driver_base" />
+	<depend package="dynamic_reconfigure" />
+	<depend package="camera_calibration_parsers" />
+	<depend package="polled_camera" />
+	<export>
+		<rosdoc config="rosdoc.yaml" />
+	</export>
 </package>
 
 

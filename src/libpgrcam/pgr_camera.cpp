@@ -223,16 +223,48 @@ Camera::Camera (unsigned int serNo):
     bool unknown = false;
     VideoMode vidMode;
     FrameRate frameRate;
+ROS_INFO("TEST?!");
+ROS_INFO("Width: %d",width);
     switch (width)
     {
       case 640:
+ROS_INFO("Height: %d",height);
         switch (height)
         {
           case 480:
             if (format == "Y8")
               vidMode = VIDEOMODE_640x480Y8;
+            if (format == "Y16")
+              vidMode = VIDEOMODE_640x480Y16;
             else if (format == "RGB")
               vidMode = VIDEOMODE_640x480RGB;
+            else
+              unknown = true;
+            break;
+          default:
+            unknown = true;
+            break;
+        }
+      case 1280:
+ROS_INFO("Height: %d",height);
+        switch (height)
+        {
+          case 960:
+            if (format == "Y8")
+            {
+ROS_INFO("Y8");
+              vidMode = VIDEOMODE_1280x960Y8;
+            }
+            else if (format == "Y16")
+            {
+ROS_INFO("Y16");
+              vidMode = VIDEOMODE_1280x960Y16;
+            }
+            else if (format == "RGB")
+            {
+ROS_INFO("RGB");
+              vidMode = VIDEOMODE_1280x960RGB;
+            }
             else
               unknown = true;
             break;
@@ -254,7 +286,11 @@ Camera::Camera (unsigned int serNo):
     // The following hardcoded numbers are from testing with
     // a FireflyMV USB (mono) camera using FlyCap2's configuration GUI
     // TODO: determine whether they are camera specific and if so, so this a better way..
-    if (rate >= 1.151 && rate < 7.606)
+    if (format == "FORMAT7")
+    {
+      frameRate = FRAMERATE_FORMAT7;
+    }
+    else if (rate >= 1.151 && rate < 7.606)
     {
       frameRate = FRAMERATE_7_5;
     }
