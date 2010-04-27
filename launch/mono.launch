@@ -1,0 +1,22 @@
+
+	<!--
+		mono.launch Start a pgr_camera node at 640x480, 15 FPS, Y8. Also start
+		an image_view.
+	-->
+<launch>
+	<node name="pgr_camera" pkg="pgr_camera" type="pgr_camera_node"
+		respawn="false" output="screen">
+		<param name="width" type="int" value="640" />
+		<param name="height" type="int" value="480" />
+		<param name="format" value="Y8" />
+		<param name="frame_rate" type="int" value="15" />
+		<param name="intrinsics_ini" type="str"
+			value="$(find pgr_camera)/test_intrinsics.ini" />
+		<param name="camera_name" type="str" value="pgr_camera" />
+	</node>
+	<node name="image_view" pkg="image_view" type="image_view"
+		respawn="false" output="screen">
+		<remap from="image" to="/camera/image_raw" />
+	</node>
+</launch>
+
