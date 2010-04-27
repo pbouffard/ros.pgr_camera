@@ -359,6 +359,7 @@ void Camera::SetGain(bool _auto, float value)
   prop.autoManualMode = _auto;
   prop.onOff = true;
   prop.absValue = value;
+  prop.absControl = true;
   if ((error = camPGR.SetProperty(&prop)) != PGRERROR_OK)
   {
     ROS_ERROR (error.GetDescription ());
@@ -372,10 +373,11 @@ void Camera::SetShutter (bool _auto, float value)
 {
   FlyCapture2::Property prop;
   FlyCapture2::Error error;
-  prop.type = FlyCapture2::AUTO_EXPOSURE;
+  prop.type = FlyCapture2::SHUTTER;
   prop.autoManualMode = _auto;
   prop.onOff = true;
   prop.absValue = value;
+  prop.absControl = true;
   if ((error = camPGR.SetProperty(&prop)) != PGRERROR_OK)
   {
     ROS_ERROR (error.GetDescription ());
