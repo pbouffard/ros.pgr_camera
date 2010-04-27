@@ -3,4 +3,9 @@ bin/
 docs/
 lib/
 *~
-Makefile
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+doc/
+patches/
+tmp
