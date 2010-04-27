@@ -62,6 +62,8 @@ namespace pgr_camera
     void setFrameCallback (boost::function < void (FlyCapture2::Image *) > callback);
     void SetVideoModeAndFramerate (unsigned int width, unsigned int height, string format, double rate);
     void SetExposure (bool _auto, bool onoff, unsigned int value = 50);
+    void SetGain (bool _auto, float value = 0.0);
+    void SetShutter (bool _auto, float value = 0.015);
 
     // FIXME: following should really be private, but I can't see how to make the compiler
     // happy if they are..

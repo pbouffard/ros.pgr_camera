@@ -3,9 +3,10 @@
 <node name="pgr_camera_node" pkg="pgr_camera" type="pgr_camera_node">
   <param name="trigger_mode" type="str" value="streaming" />
   <param name="auto_exposure" type="bool" value="True" />
-  <param name="exposure" type="double" value="0.015" />
+  <param name="auto_shutter" type="bool" value="True" />
+  <param name="shutter" type="double" value="0.015" />
   <param name="auto_gain" type="bool" value="True" />
-  <param name="gain" type="int" value="0" />
+  <param name="gain" type="double" value="0.0" />
   <param name="auto_whitebalance" type="bool" value="True" />
   <param name="whitebalance_red" type="int" value="0" />
   <param name="whitebalance_blue" type="int" value="0" />

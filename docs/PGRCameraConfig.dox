@@ -4,9 +4,10 @@ Reads and maintains the following parameters on the ROS server
 
 - \b "~trigger_mode" : \b [str] Camera mode (streaming vs. polled) min: , default: streaming, max: 
 - \b "~auto_exposure" : \b [bool] Sets the camera exposure duration to automatic. Causes the @b exposure setting to be ignored. min: False, default: True, max: True
-- \b "~exposure" : \b [double] Camera exposure time in seconds. min: 0.0, default: 0.015, max: 1.0
+- \b "~auto_shutter" : \b [bool] Sets the camera shutter speed to automatic. Allows the auto-exposure to adjust as necessary. min: False, default: True, max: True
+- \b "~shutter" : \b [double] Camera shutter length in seconds. min: 0.0, default: 0.015, max: 1.0
 - \b "~auto_gain" : \b [bool] Sets the analog gain to automatic. Causes the @b gain setting to be ignored. min: False, default: True, max: True
-- \b "~gain" : \b [int] The gain level in dB. min: 0, default: 0, max: 16
+- \b "~gain" : \b [double] The gain level in dB. min: 0.0, default: 0.0, max: 16.0
 - \b "~auto_whitebalance" : \b [bool] Whether whitebalance will continuously adjust to the current scene. Causes the @b whitebalance_red and @b whitebalance_blue settings to be ignored. min: False, default: True, max: True
 - \b "~whitebalance_red" : \b [int] Red gain as a percentage of the camera default setting. min: 0, default: 0, max: 100
 - \b "~whitebalance_blue" : \b [int] Blue gain as a percentage of the camera default setting. min: 0, default: 0, max: 100

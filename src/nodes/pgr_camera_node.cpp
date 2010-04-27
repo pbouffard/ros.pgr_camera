@@ -106,16 +106,46 @@ public:
 
     loadIntrinsics (config.intrinsics_ini, config.camera_name);
 
+    /* 
+     * If Shutter and Gain are both set to auto, then auto exposure
+     * will tune each one to maintain a constant exposure at each pixel. 
+     *
+     * If only one of Shutter/Gain is set to auto, then that value
+     * will be tuned to enforce the constant exposure value at each
+     * pixel, while the other value is not changed.
+     *
+     * If both Shutter and Gain are set to manual, then auto exposure
+     * has no effect.
+     *
+     */
+
     // Exposure
     if (config.auto_exposure)
       cam_->SetExposure (true, true);
-    else
-    {
+    else    
       cam_->SetExposure (false, true);
-    }
 
+
+    // Shutter
+    if (config.auto_shutter)
+      cam_->SetShutter (true);
+    else
+      cam_->SetShutter (false, (float)config.shutter);
+    
+
+    // Gain
+    if(config.auto_gain)
+      cam_->SetGain(true);
+    else
+      cam_->SetGain(false, (float)config.gain);
+
+
+
+
+    // video mode / framerate
     cam_->SetVideoModeAndFramerate (config.width, config.height, config.format, config.frame_rate);
 
+    
     // TF frame
     img_.header.frame_id = cam_info_.header.frame_id = config.frame_id;
 
