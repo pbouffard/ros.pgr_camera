@@ -115,7 +115,7 @@ bool Camera::setup()
   if (camSerNo == 0)
   {
     if ((error = busMgr.GetCameraFromIndex(camIndex, &guid)) != PGRERROR_OK)
-      PRINT_ERROR_AND_RETURN_FALSE
+      PRINT_ERROR_AND_RETURN_FALSE;
     ROS_INFO ("did busMgr.GetCameraFromIndex(0, &guid)");
   }
   else
@@ -349,6 +349,39 @@ void Camera::SetExposure(bool _auto, bool onoff, unsigned int value)
   {
     ROS_ERROR (error.GetDescription ());
   }
+}
+
+void Camera::SetGain(bool _auto, float value)
+{
+  FlyCapture2::Property prop;
+  FlyCapture2::Error error;
+  prop.type = FlyCapture2::GAIN;
+  prop.autoManualMode = _auto;
+  prop.onOff = true;
+  prop.absValue = value;
+  if ((error = camPGR.SetProperty(&prop)) != PGRERROR_OK)
+  {
+    ROS_ERROR (error.GetDescription ());
+  }
+
+  return;
+}
+
+
+void Camera::SetShutter (bool _auto, float value)
+{
+  FlyCapture2::Property prop;
+  FlyCapture2::Error error;
+  prop.type = FlyCapture2::AUTO_EXPOSURE;
+  prop.autoManualMode = _auto;
+  prop.onOff = true;
+  prop.absValue = value;
+  if ((error = camPGR.SetProperty(&prop)) != PGRERROR_OK)
+  {
+    ROS_ERROR (error.GetDescription ());
+  }
+
+  return;
 }
 
 } // namespace pgrcamera
