@@ -64,6 +64,7 @@ namespace pgr_camera
     void SetExposure (bool _auto, bool onoff, unsigned int value = 50);
     void SetGain (bool _auto, float value = 0.0);
     void SetShutter (bool _auto, float value = 0.015);
+    void SetTriggerMode (bool enableTrigger);
 
     // FIXME: following should really be private, but I can't see how to make the compiler
     // happy if they are..

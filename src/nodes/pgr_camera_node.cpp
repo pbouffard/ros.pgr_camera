@@ -121,31 +121,39 @@ public:
 
     // Exposure
     if (config.auto_exposure)
-      cam_->SetExposure (true, true);
-    else    
-      cam_->SetExposure (false, true);
-
+      cam_->SetExposure(true, true);
+    else
+      cam_->SetExposure(false, true);
 
     // Shutter
     if (config.auto_shutter)
-      cam_->SetShutter (true);
+      cam_->SetShutter(true);
     else
-      cam_->SetShutter (false, (float)config.shutter);
-    
+      cam_->SetShutter(false, (float)config.shutter);
 
     // Gain
-    if(config.auto_gain)
+    if (config.auto_gain)
       cam_->SetGain(true);
     else
       cam_->SetGain(false, (float)config.gain);
 
-
-
-
     // video mode / framerate
-    cam_->SetVideoModeAndFramerate (config.width, config.height, config.format, config.frame_rate);
+    cam_->SetVideoModeAndFramerate(config.width, config.height, config.format, config.frame_rate);
 
-    
+    // Trigger mode
+    if (config.trigger_mode == pgr_camera::PGRCamera_ExternalTriggerMode)
+    {
+      cam_->SetTriggerMode(true);
+    }
+    else if (config.trigger_mode == pgr_camera::PGRCamera_StreamingMode)
+    {
+      cam_->SetTriggerMode(false);
+    }
+    else
+    {
+      ROS_ERROR_STREAM("trigger_mode '" << config.trigger_mode << "' unknown/unsupported");
+    }
+
     // TF frame
     img_.header.frame_id = cam_info_.header.frame_id = config.frame_id;
 

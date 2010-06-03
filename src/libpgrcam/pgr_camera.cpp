@@ -369,7 +369,7 @@ void Camera::SetGain(bool _auto, float value)
 }
 
 
-void Camera::SetShutter (bool _auto, float value)
+void Camera::SetShutter(bool _auto, float value)
 {
   FlyCapture2::Property prop;
   FlyCapture2::Error error;
@@ -385,5 +385,81 @@ void Camera::SetShutter (bool _auto, float value)
 
   return;
 }
+
+
+bool PollForTriggerReady(FlyCapture2::Camera* pCam)
+{
+  const unsigned int k_softwareTrigger = 0x62C;
+  FlyCapture2::Error error;
+  unsigned int regVal = 0;
+
+  do
+  {
+    error = pCam->ReadRegister(k_softwareTrigger, &regVal);
+    if (error != PGRERROR_OK)
+    {
+      ROS_ERROR( error.GetDescription() );
+      return false;
+    }
+
+  } while ((regVal >> 31) != 0);
+
+  return true;
+}
+
+void Camera::SetTriggerMode(bool enableTrigger)
+{
+  FlyCapture2::TriggerMode triggerMode;
+  FlyCapture2::Error error;
+  if ((error = camPGR.GetTriggerMode(&triggerMode)) != PGRERROR_OK)
+  {
+    ROS_ERROR(error.GetDescription());
+    return;
+  }
+  triggerMode.onOff = enableTrigger;
+  if (enableTrigger)
+  {
+    triggerMode.mode = 0;
+    triggerMode.parameter = 0;
+    triggerMode.source = 0; // Triggering the camera externally using source 0.
+  }
+  if ((error = camPGR.SetTriggerMode(&triggerMode)) != PGRERROR_OK)
+  {
+    ROS_ERROR(error.GetDescription());
+    return;
+  }
+
+  if (enableTrigger)
+  {
+    // Poll to ensure camera is ready
+    bool retVal = PollForTriggerReady(&camPGR);
+    if (!retVal)
+    {
+      ROS_ERROR("Error polling for trigger ready!");
+      return;
+    }
+
+    // Get the camera configuration
+    FlyCapture2::FC2Config config;
+    error = camPGR.GetConfiguration(&config);
+    if (error != PGRERROR_OK)
+    {
+      ROS_ERROR(error.GetDescription());
+      return;
+    }
+
+    // Set the grab timeout to 0 seconds
+    config.grabTimeout = 0;
+
+    // Set the camera configuration
+    error = camPGR.SetConfiguration(&config);
+    if (error != PGRERROR_OK)
+    {
+      ROS_ERROR(error.GetDescription());
+      return;
+    }
+  }
+}
+
 
 } // namespace pgrcamera

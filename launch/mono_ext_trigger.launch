@@ -5,10 +5,10 @@
 	-->
 <launch>
 <node pkg="dynamic_reconfigure" name="reconfig" type="reconfigure_gui" />
-
 	<node name="pgr_camera" pkg="pgr_camera" type="pgr_camera_node"
 		respawn="false" output="screen">
-		<param name="width" type="int" value="640" />
+        <param name="trigger_mode" type="str" value="ext_trigger" />
+        <param name="width" type="int" value="640" />
 		<param name="height" type="int" value="480" />
 		<param name="format" value="Y8" />
 		<param name="frame_rate" type="int" value="15" />
